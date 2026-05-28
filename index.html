@@ -4,13 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Konecranes Innovation Platformer — Idea Sprint</title>
+  <title>Konecranes Innovation — Idea Rain</title>
   <style>
     :root{
       --bg1:#07111f;
       --bg2:#0b1c33;
       --panel:rgba(10,16,26,.82);
-      --panel2:rgba(255,255,255,.06);
       --text:#eaf2ff;
       --muted:#a9bbd6;
       --accent:#6ae4ff;
@@ -30,12 +29,15 @@
       justify-content:center;
       background: radial-gradient(1200px 700px at 30% 20%, #122a4b 0%, var(--bg2) 35%, var(--bg1) 100%);
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       overflow:hidden;
+      padding: 14px;
     }
+
+    /* ✅ Smaller and always visible */
     .wrap{
-      width:min(1100px, 96vw);
-      height:min(700px, 92vh);
+      width: min(900px, 96vw);
+      height: min(560px, 86vh);
       position:relative;
       border-radius:24px;
       overflow:hidden;
@@ -43,6 +45,7 @@
       border:1px solid rgba(255,255,255,.08);
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
     }
+
     canvas{
       width:100%;
       height:100%;
@@ -51,14 +54,16 @@
         linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0)),
         radial-gradient(800px 400px at 50% 10%, rgba(106,228,255,.12), transparent 60%);
     }
+
     .hud{
       position:absolute;
-      inset:16px 16px auto 16px;
+      inset:12px 12px auto 12px;
       display:flex;
-      gap:12px;
+      gap:10px;
       align-items:flex-start;
       justify-content:space-between;
       pointer-events:none;
+      flex-wrap:wrap;
     }
     .hud .left, .hud .right{
       display:flex;
@@ -67,8 +72,7 @@
       align-items:center;
     }
     .pill{
-      pointer-events:none;
-      padding:10px 12px;
+      padding:9px 11px;
       border-radius:999px;
       background: var(--panel);
       border:1px solid rgba(255,255,255,.08);
@@ -76,15 +80,12 @@
       display:flex;
       gap:10px;
       align-items:center;
-      font-size:14px;
+      font-size:13px;
       color:var(--text);
+      font-variant-numeric: tabular-nums;
     }
-    .pill b{ font-weight:700; }
-    .kpi{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
+    .pill b{ font-weight:800; }
+
     .dot{
       width:10px; height:10px; border-radius:50%;
       background: var(--accent);
@@ -93,31 +94,31 @@
     .dot.good{ background:var(--good); box-shadow:0 0 18px rgba(255,210,74,.35); }
     .dot.bad{ background:var(--bad); box-shadow:0 0 16px rgba(154,166,178,.25); }
     .dot.diamond{ background:var(--diamond); box-shadow:0 0 18px rgba(111,240,255,.35); }
-    .timer{
-      font-variant-numeric: tabular-nums;
-    }
+
     .timer.danger{
       color: var(--danger);
       text-shadow: 0 0 16px rgba(255,93,108,.25);
     }
+
     .overlay{
       position:absolute;
       inset:0;
       display:none;
       align-items:center;
       justify-content:center;
-      padding:22px;
-      background: radial-gradient(1000px 600px at 50% 15%, rgba(0,0,0,.25), rgba(0,0,0,.65));
+      padding:18px;
+      background: radial-gradient(1000px 600px at 50% 15%, rgba(0,0,0,.25), rgba(0,0,0,.70));
       backdrop-filter: blur(4px);
     }
     .overlay.show{ display:flex; }
+
     .panel{
-      width:min(860px, 96%);
+      width:min(820px, 96%);
       border-radius:22px;
       background: rgba(10,16,26,.92);
       border:1px solid rgba(255,255,255,.10);
       box-shadow: 0 22px 60px rgba(0,0,0,.55);
-      padding:18px;
+      padding:16px;
     }
     .panel header{
       display:flex;
@@ -125,10 +126,11 @@
       gap:12px;
       align-items:flex-start;
       margin-bottom:10px;
+      flex-wrap:wrap;
     }
     .panel h2{
       margin:0;
-      font-size:20px;
+      font-size:18px;
       letter-spacing:.2px;
     }
     .panel .sub{
@@ -136,12 +138,14 @@
       font-size:13px;
       margin-top:4px;
       line-height:1.35;
+      max-width: 520px;
     }
+
     .grid{
       display:grid;
-      grid-template-columns: 1.25fr .9fr;
-      gap:14px;
-      margin-top:14px;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+      margin-top:12px;
     }
     @media (max-width: 820px){
       .grid{ grid-template-columns:1fr; }
@@ -150,11 +154,11 @@
       border-radius:18px;
       background: rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08);
-      padding:14px;
+      padding:13px;
     }
     .card h3{
       margin:0 0 6px 0;
-      font-size:15px;
+      font-size:14px;
     }
     .list{
       margin:0;
@@ -174,19 +178,20 @@
       border:1px solid rgba(255,255,255,.07);
       margin-top:10px;
     }
-    .shopRow strong{ font-size:14px; display:block; }
+    .shopRow strong{ font-size:13.5px; display:block; }
     .shopRow .desc{ color:var(--muted); font-size:12.5px; margin-top:4px; line-height:1.35; }
+
     .btn{
       pointer-events:auto;
       cursor:pointer;
       border:0;
       border-radius:14px;
-      padding:10px 12px;
+      padding:9px 11px;
       background: rgba(106,228,255,.18);
       color: var(--text);
       border:1px solid rgba(106,228,255,.35);
       transition: transform .06s ease, background .15s ease;
-      font-weight:700;
+      font-weight:800;
       font-size:13px;
       min-width:120px;
       text-align:center;
@@ -197,10 +202,6 @@
     .btn.secondary{
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.12);
-    }
-    .btn.danger{
-      background: rgba(255,93,108,.18);
-      border:1px solid rgba(255,93,108,.35);
     }
     .btn:disabled{
       cursor:not-allowed;
@@ -237,7 +238,7 @@
 </head>
 <body>
   <div class="wrap">
-    <canvas id="c" width="1100" height="700"></canvas>
+    <canvas id="c"></canvas>
 
     <div class="hud">
       <div class="left">
@@ -247,9 +248,10 @@
           <span class="badge">Wallet: <b id="walletTxt">0</b> coins</span>
         </div>
         <div class="pill">
-          <span class="kpi"><span class="dot bad"></span>Bad: <b id="badTxt">0</b></span>
-          <span class="kpi"><span class="dot good"></span>Good: <b id="goodTxt">0</b></span>
-          <span class="kpi"><span class="dot diamond"></span>Diamond: <b id="diaTxt">0</b></span>
+          <span><span class="dot bad"></span> Bad: <b id="badTxt">0</b></span>
+          <span><span class="dot good"></span> Good: <b id="goodTxt">0</b></span>
+          <span><span class="dot diamond"></span> Diamond: <b id="diaTxt">0</b></span>
+          <span class="badge">Missed: <b id="missedTxt">0</b></span>
         </div>
       </div>
 
@@ -259,7 +261,7 @@
           <b class="timer" id="timerTxt">30.0s</b>
         </div>
         <div class="pill">
-          <span>Moves:</span>
+          <span>Move:</span>
           <span style="color:var(--muted)">A/D or ←/→</span>
           <span style="margin-left:10px">Jump:</span>
           <span style="color:var(--muted)">W/Space/↑</span>
@@ -267,107 +269,83 @@
       </div>
     </div>
 
-    <!-- Overlay: Year End + Shop / Final -->
     <div class="overlay" id="overlay">
-      <div class="panel" id="panel">
-        <!-- filled by JS -->
-      </div>
+      <div class="panel" id="panel"></div>
     </div>
   </div>
 
 <script>
 (() => {
-  // =========================
-  // Utilities
-  // =========================
+  // ========= utils =========
   const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
   const lerp = (a,b,t)=>a+(b-a)*t;
   const rand = (a,b)=>a+Math.random()*(b-a);
   const randi = (a,b)=>Math.floor(rand(a,b+1));
 
-  // =========================
-  // Canvas & rendering
-  // =========================
+  // ========= canvas =========
   const canvas = document.getElementById("c");
   const ctx = canvas.getContext("2d");
 
-  // Scale canvas to device pixel ratio for crispness
-  function resize() {
+  let W = 900, H = 560, DPR = 1;
+
+  function resize(){
     const rect = canvas.getBoundingClientRect();
-    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    canvas.width = Math.floor(rect.width * dpr);
-    canvas.height = Math.floor(rect.height * dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+    DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.floor(rect.width * DPR);
+    canvas.height = Math.floor(rect.height * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    W = rect.width;
+    H = rect.height;
+
+    // Regenerate platforms on resize (keeps layout consistent)
+    platforms = generatePlatforms(state.round);
   }
   window.addEventListener("resize", resize);
-  resize();
 
-  // =========================
-  // DOM refs
-  // =========================
+  // ========= DOM =========
   const roundTxt = document.getElementById("roundTxt");
   const walletTxt = document.getElementById("walletTxt");
   const badTxt = document.getElementById("badTxt");
   const goodTxt = document.getElementById("goodTxt");
   const diaTxt = document.getElementById("diaTxt");
+  const missedTxt = document.getElementById("missedTxt");
   const timerTxt = document.getElementById("timerTxt");
   const overlay = document.getElementById("overlay");
   const panel = document.getElementById("panel");
 
-  // =========================
-  // Game constants
-  // =========================
-  const VIEW_W = () => canvas.getBoundingClientRect().width;
-  const VIEW_H = () => canvas.getBoundingClientRect().height;
-
-  const GRAVITY = 2100;       // px/s^2
-  const MOVE_ACC = 2800;      // px/s^2
-  const MAX_SPEED = 420;      // px/s
-  const FRICTION = 2200;      // px/s^2
-  const JUMP_V = 780;         // px/s
-  const COYOTE = 0.09;        // seconds (jump grace after leaving ground)
-  const JUMP_BUFFER = 0.10;   // seconds (buffer jump press)
+  // ========= game constants =========
+  const GRAVITY = 2100;
+  const MOVE_ACC = 3000;
+  const MAX_SPEED = 480;
+  const FRICTION = 2400;
+  const JUMP_V = 820;
+  const COYOTE = 0.09;
+  const JUMP_BUFFER = 0.10;
 
   const ROUND_TIME = 30.0;
   const TOTAL_ROUNDS = 5;
 
-  // World dimensions (scrolling level)
-  const WORLD_W = 3600;
-  const WORLD_H = 900;
-
-  // =========================
-  // State
-  // =========================
+  // ========= state =========
   const state = {
     round: 1,
     wallet: 0,
     totalIdeas: 0,
     totalCoinsEarned: 0,
 
-    // Upgrades (purchasable once)
     upgrades: {
-      tppsIndia: false,   // +more ideas next levels
-      focusThemes: false, // +more good ideas next levels
-      patentor: false     // +more diamond ideas next levels
+      tppsIndia: false,   // more ideas per second
+      focusThemes: false, // more good ideas
+      patentor: false     // more diamond ideas
     },
 
-    // Spawn tuning (affected by upgrades)
-    spawnBase: {
-      count: 22,             // base ideas per round
-      badP: 0.60,
-      goodP: 0.35,
-      diaP: 0.05
-    },
-
-    // round runtime
     playing: true,
     timeLeft: ROUND_TIME,
 
-    // collected this round
     collected: { bad:0, good:0, diamond:0 },
+    missed: 0
   };
 
-  // Inputs
+  // ========= input =========
   const keys = new Set();
   let jumpBuffer = 0;
 
@@ -375,20 +353,15 @@
     const k = e.key.toLowerCase();
     keys.add(k);
     if (k === " " || k === "w" || k === "arrowup") jumpBuffer = JUMP_BUFFER;
-    // prevent page scrolling with arrows/space
-    if ([" ", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(e.key.toLowerCase())) {
-      e.preventDefault();
-    }
+    if ([" ", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
   }, { passive:false });
 
   window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
 
-  // =========================
-  // Entities
-  // =========================
+  // ========= world & entities =========
   const player = {
-    x: 120,
-    y: 600,
+    x: 80,
+    y: 0,
     w: 34,
     h: 48,
     vx: 0,
@@ -398,329 +371,170 @@
     facing: 1
   };
 
-  let camX = 0;
-  let camY = 0;
-
-  /** platforms: array of {x,y,w,h} */
   let platforms = [];
-  /** ideas: array of {x,y,r,type,collected:boolean, bobT:number} */
   let ideas = [];
+  let spawnAcc = 0;
+  let t = 0;
 
-  // =========================
-  // Level generation
-  // =========================
-  function generatePlatforms(round) {
+  function groundY(){
+    return H - 52; // visual ground height margin
+  }
+
+  // ========= platforms =========
+  function generatePlatforms(round){
     const p = [];
-    // Ground
-    p.push({ x:0, y:780, w:WORLD_W, h:120 });
+    const gY = groundY();
+    // ground
+    p.push({ x:0, y:gY, w:W, h:H-gY });
 
-    // A few chunky "buildings" / steps
-    p.push({ x:140, y:700, w:260, h:20 });
-    p.push({ x:520, y:640, w:260, h:20 });
-    p.push({ x:920, y:610, w:210, h:20 });
-    p.push({ x:1240, y:660, w:260, h:20 });
+    // Some catching platforms (helps you reach higher falling ideas)
+    const baseY = gY - 80;
+    const drift = (round-1) * 6;
 
-    // Procedural platforms across the world
-    // Make it slightly harder each round: platforms a bit higher / gaps bigger.
-    const segments = 10;
-    let x = 1600;
-    let y = 700;
-    for (let i=0; i<segments; i++){
-      const w = randi(220, 360);
-      const gap = randi(120, 220) + (round-1)*8;
-      const dy = randi(-110, 90) - (round-1)*6;
-      y = clamp(y + dy, 420, 740);
-      p.push({ x, y, w, h: 18 });
-      x += w + gap;
-    }
+    p.push({ x: 60, y: baseY - 0 - drift, w: 170, h: 18 });
+    p.push({ x: 280, y: baseY - 70 - drift, w: 170, h: 18 });
+    p.push({ x: 520, y: baseY - 35 - drift, w: 190, h: 18 });
+    p.push({ x: 740, y: baseY - 110 - drift, w: 140, h: 18 });
 
-    // Ensure last stretch is reachable
-    p.push({ x:WORLD_W-520, y:680, w:320, h:18 });
-    p.push({ x:WORLD_W-160, y:620, w:120, h:18 });
+    // One mid “cloud” platform
+    p.push({ x: W*0.38, y: gY - 210 - drift, w: 220, h: 18 });
 
     return p;
   }
 
-  function computeSpawnConfig() {
-    // Clone base
-    let count = state.spawnBase.count;
-    let badP = state.spawnBase.badP;
-    let goodP = state.spawnBase.goodP;
-    let diaP = state.spawnBase.diaP;
+  // ========= idea rain tuning (makes it impossible to get them all) =========
+  function spawnConfig(){
+    // Spawn rate intentionally high
+    let rate = 5.2 + (state.round-1) * 0.9; // ideas per second (round scaling)
+    if (state.upgrades.tppsIndia) rate += 2.2; // even more ideas
 
-    // Upgrades modify future rounds
-    if (state.upgrades.tppsIndia) count += 10;                 // more ideas
-    if (state.upgrades.focusThemes) { goodP += 0.18; badP -= 0.18; } // shift to good
-    if (state.upgrades.patentor) { diaP += 0.08; badP -= 0.05; goodP -= 0.03; } // shift to diamond
+    // Type probabilities
+    let badP = 0.62;
+    let goodP = 0.33;
+    let diaP = 0.05;
 
-    // Normalize and clamp
-    badP = Math.max(0.05, badP);
-    goodP = Math.max(0.05, goodP);
+    if (state.upgrades.focusThemes){ goodP += 0.18; badP -= 0.18; }
+    if (state.upgrades.patentor){ diaP += 0.08; badP -= 0.05; goodP -= 0.03; }
+
+    badP = Math.max(0.08, badP);
+    goodP = Math.max(0.10, goodP);
     diaP = Math.max(0.02, diaP);
     const sum = badP + goodP + diaP;
-    badP /= sum; goodP /= sum; diaP /= sum;
+    badP/=sum; goodP/=sum; diaP/=sum;
 
-    // Slight scaling across rounds: more ideas later regardless
-    count += (state.round-1) * 3;
+    // Falling speed increases slightly each round
+    const fallMin = 240 + (state.round-1)*18;
+    const fallMax = 420 + (state.round-1)*24;
 
-    return { count, badP, goodP, diaP };
+    return { rate, badP, goodP, diaP, fallMin, fallMax };
   }
 
-  function pickIdeaType(cfg) {
+  function pickIdeaType(cfg){
     const r = Math.random();
     if (r < cfg.badP) return "bad";
     if (r < cfg.badP + cfg.goodP) return "good";
     return "diamond";
   }
 
-  function generateIdeas() {
-    ideas = [];
-    const cfg = computeSpawnConfig();
+  function spawnIdea(cfg){
+    const type = pickIdeaType(cfg);
+    const r = (type === "diamond") ? 16 : 14;
 
-    // collect candidate "spawn points" from platform tops
-    const spawnPts = [];
-    for (const pl of platforms) {
-      // skip ground for spawns (too easy / clutter)
-      if (pl.y >= 770) continue;
-      const topY = pl.y - 18;
-      const countOnPlat = randi(1, 3);
-      for (let i=0; i<countOnPlat; i++){
-        spawnPts.push({
-          x: rand(pl.x + 30, pl.x + pl.w - 30),
-          y: topY
-        });
-      }
-    }
+    // spawn above view, random x
+    const x = rand(20, W-20);
+    const y = -rand(30, 120);
 
-    // fallback if not enough
-    while (spawnPts.length < cfg.count) {
-      spawnPts.push({
-        x: rand(200, WORLD_W-200),
-        y: rand(420, 720)
-      });
-    }
+    const vy = rand(cfg.fallMin, cfg.fallMax);
+    const vx = rand(-45, 45); // slight drift
+    const phase = Math.random() * Math.PI * 2;
 
-    // Shuffle points, take cfg.count
-    for (let i=spawnPts.length-1; i>0; i--){
-      const j = randi(0,i);
-      [spawnPts[i], spawnPts[j]] = [spawnPts[j], spawnPts[i]];
-    }
-
-    for (let i=0; i<cfg.count; i++){
-      const pt = spawnPts[i];
-      const type = pickIdeaType(cfg);
-      ideas.push({
-        x: pt.x,
-        y: pt.y,
-        r: 14,
-        type,
-        collected: false,
-        bobT: Math.random() * Math.PI * 2
-      });
-    }
+    ideas.push({ x, y, vx, vy, r, type, phase });
   }
 
-  function resetRound() {
-    state.playing = true;
-    state.timeLeft = ROUND_TIME;
-    state.collected = { bad:0, good:0, diamond:0 };
-
-    // player start
-    player.x = 120;
-    player.y = 620;
-    player.vx = 0;
-    player.vy = 0;
-    player.onGround = false;
-    player.coyote = 0;
-
-    platforms = generatePlatforms(state.round);
-    generateIdeas();
-
-    overlay.classList.remove("show");
-    updateHud();
-  }
-
-  // =========================
-  // Collision
-  // =========================
+  // ========= collisions =========
   function aabbIntersect(ax,ay,aw,ah, bx,by,bw,bh){
     return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
   }
 
-  function resolveCollisions(dt) {
+  function resolvePlayerCollisions(dt){
     player.onGround = false;
 
-    // Move X
+    // X
     player.x += player.vx * dt;
-    for (const pl of platforms) {
-      if (aabbIntersect(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)) {
+    for (const pl of platforms){
+      if (aabbIntersect(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)){
         if (player.vx > 0) player.x = pl.x - player.w;
         else if (player.vx < 0) player.x = pl.x + pl.w;
         player.vx = 0;
       }
     }
 
-    // Move Y
+    // Y
     player.y += player.vy * dt;
-    for (const pl of platforms) {
-      if (aabbIntersect(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)) {
-        if (player.vy > 0) { // falling
+    for (const pl of platforms){
+      if (aabbIntersect(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)){
+        if (player.vy > 0){
           player.y = pl.y - player.h;
           player.vy = 0;
           player.onGround = true;
           player.coyote = COYOTE;
-        } else if (player.vy < 0) { // rising
+        } else if (player.vy < 0){
           player.y = pl.y + pl.h;
           player.vy = 0;
         }
       }
     }
 
-    // world bounds
-    player.x = clamp(player.x, 0, WORLD_W - player.w);
-    if (player.y > WORLD_H + 200) {
-      // fell off: respawn penalty (small time penalty)
-      player.x = 120;
-      player.y = 620;
+    player.x = clamp(player.x, 0, W - player.w);
+    if (player.y > H + 160){
+      // fell off (rare), reposition
+      player.x = 80;
+      player.y = groundY() - player.h - 10;
       player.vx = 0;
       player.vy = 0;
-      state.timeLeft = Math.max(0, state.timeLeft - 2.0);
+      state.timeLeft = Math.max(0, state.timeLeft - 1.5);
     }
   }
 
-  // =========================
-  // Collect ideas
-  // =========================
-  function checkCollections() {
+  // ========= catching & missing =========
+  function checkCatch(){
     const px = player.x + player.w/2;
     const py = player.y + player.h/2;
+    const catchR = Math.max(player.w, player.h) * 0.55;
 
-    for (const it of ideas) {
-      if (it.collected) continue;
-      const dx = (it.x - px);
-      const dy = (it.y - py);
-      const dist2 = dx*dx + dy*dy;
-      const rad = it.r + Math.max(player.w, player.h) * 0.35;
-      if (dist2 < rad*rad) {
-        it.collected = true;
+    for (let i=ideas.length-1; i>=0; i--){
+      const it = ideas[i];
+      const dx = it.x - px;
+      const dy = it.y - py;
+      const rr = it.r + catchR;
+      if (dx*dx + dy*dy < rr*rr){
+        // caught
         state.collected[it.type]++;
         state.totalIdeas++;
-        // tiny "pickup" boost
-        player.vx += (dx > 0 ? -1 : 1) * 18;
+        ideas.splice(i,1);
       }
     }
   }
 
-  function coinsFromCollected(col) {
+  function coinsFromCollected(col){
     return col.bad * 1 + col.good * 3 + col.diamond * 10;
   }
 
-  // =========================
-  // UI: overlays
-  // =========================
-  function showYearEndShop() {
-    state.playing = false;
+  // ========= UI =========
+  function updateHud(){
+    roundTxt.textContent = state.round;
+    walletTxt.textContent = state.wallet;
+    badTxt.textContent = state.collected.bad;
+    goodTxt.textContent = state.collected.good;
+    diaTxt.textContent = state.collected.diamond;
+    missedTxt.textContent = state.missed;
 
-    const earned = coinsFromCollected(state.collected);
-    state.wallet += earned;
-    state.totalCoinsEarned += earned;
-
-    // Build overlay HTML
-    panel.innerHTML = `
-      <header>
-        <div>
-          <h2>Year End Review — Round ${state.round}/${TOTAL_ROUNDS}</h2>
-          <div class="sub">
-            You sprinted through the year collecting innovation ideas. Coins are paid out based on idea quality.
-          </div>
-        </div>
-        <div class="pill" style="pointer-events:none;">
-          <span class="dot"></span>
-          <span>Earned this year: <b style="color:var(--ok)">${earned}</b> coins</span>
-        </div>
-      </header>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Collected Ideas</h3>
-          <ul class="list">
-            <li><b>Bad ideas</b>: ${state.collected.bad} × 1 coin</li>
-            <li><b>Good ideas</b>: ${state.collected.good} × 3 coins</li>
-            <li><b>Diamond ideas</b>: ${state.collected.diamond} × 10 coins</li>
-          </ul>
-          <div class="tiny">
-            Tip: Upgrades affect the <b>next</b> years (more ideas, better distribution).
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Wallet & Progress</h3>
-          <ul class="list">
-            <li><b>Wallet now</b>: ${state.wallet} coins</li>
-            <li><b>Total ideas gathered</b>: ${state.totalIdeas}</li>
-            <li><b>Total coins earned</b>: ${state.totalCoinsEarned}</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:14px;">
-        <h3>Upgrade Shop</h3>
-
-        ${shopRowHTML(
-          "Set idea quantity TPPs to India",
-          "Cost: 50 coins — Result: <b>more ideas</b> spawn in following years.",
-          50,
-          "tppsIndia"
-        )}
-
-        ${shopRowHTML(
-          "Select innovation focus themes",
-          "Cost: 50 coins — Result: <b>more good ideas</b> spawn in following years.",
-          50,
-          "focusThemes"
-        )}
-
-        ${shopRowHTML(
-          "Hire an idea patentor",
-          "Cost: 100 coins — Result: <b>more diamond ideas</b> spawn in following years.",
-          100,
-          "patentor"
-        )}
-
-        <div class="tiny">
-          Purchased upgrades are permanent for the rest of the game. You can only buy each upgrade once.
-        </div>
-      </div>
-
-      <div class="footerActions">
-        <button class="btn secondary" id="btnReplay">Restart Game</button>
-        <button class="btn" id="btnNext">${state.round < TOTAL_ROUNDS ? "Start Next Year →" : "Finish Game →"}</button>
-      </div>
-    `;
-
-    // Hook buttons
-    overlay.classList.add("show");
-
-    // Buy buttons
-    for (const key of ["tppsIndia","focusThemes","patentor"]) {
-      const btn = document.getElementById(`buy_${key}`);
-      if (!btn) continue;
-      btn.addEventListener("click", () => buyUpgrade(key));
-    }
-
-    document.getElementById("btnReplay").addEventListener("click", () => restartGame());
-    document.getElementById("btnNext").addEventListener("click", () => {
-      if (state.round >= TOTAL_ROUNDS) showFinal();
-      else {
-        state.round++;
-        resetRound();
-      }
-    });
-
-    updateHud();
+    timerTxt.textContent = `${state.timeLeft.toFixed(1)}s`;
+    timerTxt.classList.toggle("danger", state.timeLeft <= 7);
   }
 
-  function shopRowHTML(title, desc, cost, key) {
+  // ========= shop overlay =========
+  function shopRowHTML(title, desc, cost, key){
     const owned = state.upgrades[key];
     const affordable = state.wallet >= cost;
     const disabled = owned || !affordable;
@@ -736,28 +550,123 @@
     `;
   }
 
-  function buyUpgrade(key) {
+  function buyUpgrade(key){
     const costs = { tppsIndia:50, focusThemes:50, patentor:100 };
     const cost = costs[key] ?? 99999;
     if (state.upgrades[key]) return;
     if (state.wallet < cost) return;
-
     state.wallet -= cost;
     state.upgrades[key] = true;
-
-    // Re-render the shop overlay with updated state
-    showYearEndShop();
+    showYearEndShop(); // rerender
   }
 
-  function showFinal() {
+  function showYearEndShop(){
     state.playing = false;
 
+    const earned = coinsFromCollected(state.collected);
+    state.wallet += earned;
+    state.totalCoinsEarned += earned;
+
+    panel.innerHTML = `
+      <header>
+        <div>
+          <h2>Year End Review — Round ${state.round}/${TOTAL_ROUNDS}</h2>
+          <div class="sub">
+            Idea rain season is over. Coins are paid based on the quality you caught before ideas hit the ground.
+          </div>
+        </div>
+        <div class="pill" style="pointer-events:none;">
+          <span class="dot"></span>
+          <span>Earned this year: <b style="color:var(--ok)">${earned}</b> coins</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Results</h3>
+          <ul class="list">
+            <li><b>Bad ideas</b>: ${state.collected.bad} × 1 coin</li>
+            <li><b>Good ideas</b>: ${state.collected.good} × 3 coins</li>
+            <li><b>Diamond ideas</b>: ${state.collected.diamond} × 10 coins</li>
+            <li><b>Missed (hit the ground)</b>: ${state.missed}</li>
+          </ul>
+          <div class="tiny">
+            Spawn rate is intentionally high — it’s designed so you can’t catch everything.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Wallet & Totals</h3>
+          <ul class="list">
+            <li><b>Wallet now</b>: ${state.wallet} coins</li>
+            <li><b>Total ideas gathered</b>: ${state.totalIdeas}</li>
+            <li><b>Total coins earned</b>: ${state.totalCoinsEarned}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h3>Upgrade Shop</h3>
+
+        ${shopRowHTML(
+          "Set idea quantity TPPs to India",
+          "Cost: 50 coins — Result: <b>more ideas rain</b> in the next rounds.",
+          50,
+          "tppsIndia"
+        )}
+
+        ${shopRowHTML(
+          "Select innovation focus themes",
+          "Cost: 50 coins — Result: <b>more good ideas</b> in the next rounds.",
+          50,
+          "focusThemes"
+        )}
+
+        ${shopRowHTML(
+          "Hire an idea patentor",
+          "Cost: 100 coins — Result: <b>more diamond ideas</b> in the next rounds.",
+          100,
+          "patentor"
+        )}
+
+        <div class="tiny">
+          Upgrades are permanent for the remaining rounds.
+        </div>
+      </div>
+
+      <div class="footerActions">
+        <button class="btn secondary" id="btnReplay">Restart Game</button>
+        <button class="btn" id="btnNext">${state.round < TOTAL_ROUNDS ? "Start Next Year →" : "Finish Game →"}</button>
+      </div>
+    `;
+
+    overlay.classList.add("show");
+
+    for (const key of ["tppsIndia","focusThemes","patentor"]){
+      const btn = document.getElementById(`buy_${key}`);
+      if (btn) btn.addEventListener("click", ()=>buyUpgrade(key));
+    }
+
+    document.getElementById("btnReplay").addEventListener("click", restartGame);
+    document.getElementById("btnNext").addEventListener("click", () => {
+      if (state.round >= TOTAL_ROUNDS) showFinal();
+      else {
+        state.round++;
+        resetRound();
+      }
+    });
+
+    updateHud();
+  }
+
+  function showFinal(){
+    state.playing = false;
     panel.innerHTML = `
       <header>
         <div>
           <h2>5 Years Completed — Innovation Program Summary</h2>
           <div class="sub">
-            Great work! Here’s how much innovation you captured across five rounds.
+            Final results of your innovation idea-catching sprint.
           </div>
         </div>
         <div class="pill" style="pointer-events:none;">
@@ -774,37 +683,33 @@
             <li><b>Total coins earned</b>: ${state.totalCoinsEarned}</li>
           </ul>
           <div class="tiny">
-            Score idea: your core score is <b>${state.totalIdeas}</b> (ideas gathered). Coins are your upgrade economy.
+            Your core score is ideas gathered: <b>${state.totalIdeas}</b>.
           </div>
         </div>
 
         <div class="card">
           <h3>Upgrades Owned</h3>
           <ul class="list">
-            <li>Idea quantity TPPs to India: <b>${state.upgrades.tppsIndia ? "Yes" : "No"}</b></li>
-            <li>Innovation focus themes: <b>${state.upgrades.focusThemes ? "Yes" : "No"}</b></li>
+            <li>TPPs to India: <b>${state.upgrades.tppsIndia ? "Yes" : "No"}</b></li>
+            <li>Focus themes: <b>${state.upgrades.focusThemes ? "Yes" : "No"}</b></li>
             <li>Idea patentor: <b>${state.upgrades.patentor ? "Yes" : "No"}</b></li>
           </ul>
         </div>
       </div>
 
-      <div class="card" style="margin-top:14px;">
+      <div class="card" style="margin-top:12px;">
         <h3>Play Again?</h3>
-        <div class="tiny">
-          Try a different strategy: buy more quantity early, or push quality (good/diamond) for bigger coin returns.
-        </div>
         <div class="footerActions">
           <button class="btn secondary" id="btnReplay2">Restart</button>
         </div>
       </div>
     `;
-
     overlay.classList.add("show");
     document.getElementById("btnReplay2").addEventListener("click", restartGame);
     updateHud();
   }
 
-  function restartGame() {
+  function restartGame(){
     state.round = 1;
     state.wallet = 0;
     state.totalIdeas = 0;
@@ -813,25 +718,8 @@
     resetRound();
   }
 
-  // =========================
-  // HUD updates
-  // =========================
-  function updateHud() {
-    roundTxt.textContent = state.round;
-    walletTxt.textContent = state.wallet;
-
-    badTxt.textContent = state.collected.bad;
-    goodTxt.textContent = state.collected.good;
-    diaTxt.textContent = state.collected.diamond;
-
-    timerTxt.textContent = `${state.timeLeft.toFixed(1)}s`;
-    timerTxt.classList.toggle("danger", state.timeLeft <= 7);
-  }
-
-  // =========================
-  // Drawing helpers
-  // =========================
-  function drawRoundedRect(x,y,w,h,r) {
+  // ========= drawing =========
+  function drawRoundedRect(x,y,w,h,r){
     ctx.beginPath();
     ctx.moveTo(x+r, y);
     ctx.arcTo(x+w, y, x+w, y+h, r);
@@ -841,61 +729,144 @@
     ctx.closePath();
   }
 
-  function drawBackground() {
-    const w = VIEW_W(), h = VIEW_H();
-    // subtle stars
+  function drawBackground(){
+    // stars / particles
     ctx.save();
     ctx.globalAlpha = 0.25;
-    for (let i=0;i<55;i++){
-      const sx = (i*97 % 1200) - (camX*0.12 % 1200);
-      const sy = (i*53 % 700) - (camY*0.10 % 700);
-      const x = (sx + 1200) % 1200;
-      const y = (sy + 700) % 700;
-      ctx.fillStyle = "rgba(255,255,255,.6)";
+    for (let i=0;i<46;i++){
+      const x = (i*97 % 1200) % W;
+      const y = (i*53 % 700) % H;
+      ctx.fillStyle = "rgba(255,255,255,.65)";
       ctx.fillRect(x, y, 2, 2);
     }
     ctx.restore();
 
     // horizon glow
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, "rgba(106,228,255,.10)");
-    grad.addColorStop(0.35, "rgba(106,228,255,.04)");
-    grad.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,w,h);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "rgba(106,228,255,.10)");
+    g.addColorStop(0.4, "rgba(106,228,255,.04)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
     ctx.restore();
   }
 
-  function drawPlatforms() {
-    for (const pl of platforms) {
-      const x = pl.x - camX;
-      const y = pl.y - camY;
-      if (x + pl.w < -50 || x > VIEW_W()+50) continue;
-
-      // platform base
+  function drawPlatforms(){
+    for (const pl of platforms){
       ctx.save();
       ctx.fillStyle = "rgba(255,255,255,.06)";
       ctx.strokeStyle = "rgba(106,228,255,.16)";
       ctx.lineWidth = 2;
-      drawRoundedRect(x, y, pl.w, pl.h, 10);
+      drawRoundedRect(pl.x, pl.y, pl.w, pl.h, 10);
       ctx.fill();
       ctx.stroke();
 
       // top highlight
       ctx.fillStyle = "rgba(106,228,255,.06)";
-      drawRoundedRect(x+4, y+3, pl.w-8, Math.max(6, pl.h*0.35), 8);
+      drawRoundedRect(pl.x+4, pl.y+3, pl.w-8, Math.max(6, pl.h*0.4), 8);
       ctx.fill();
       ctx.restore();
     }
+
+    // ground line
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY());
+    ctx.lineTo(W, groundY());
+    ctx.stroke();
+    ctx.restore();
   }
 
-  function drawPlayer() {
-    const x = player.x - camX;
-    const y = player.y - camY;
+  // ✅ More obvious “light bulb” icon
+  function drawBulb(x,y,scale,type,phase){
+    let glow, glass;
+    if (type === "bad"){
+      glow = "rgba(154,166,178,.28)";
+      glass = "rgba(154,166,178,.60)";
+    } else if (type === "good"){
+      glow = "rgba(255,210,74,.32)";
+      glass = "rgba(255,210,74,.70)";
+    } else {
+      glow = "rgba(111,240,255,.35)";
+      glass = "rgba(111,240,255,.78)";
+    }
+
+    const wobble = Math.sin(t*4 + phase) * 0.05;
 
     ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(wobble);
 
+    // outer glow
+    ctx.globalAlpha = 0.60;
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, 18*scale, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // bulb glass
+    ctx.fillStyle = glass;
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -2*scale, 11*scale, 14*scale, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    // highlight
+    ctx.globalAlpha = 0.30;
+    ctx.fillStyle = "rgba(255,255,255,.9)";
+    ctx.beginPath();
+    ctx.ellipse(-4*scale, -8*scale, 3*scale, 6*scale, 0.4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // filament
+    ctx.strokeStyle = "rgba(0,0,0,.30)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-5*scale, -1*scale);
+    ctx.quadraticCurveTo(0, 5*scale, 5*scale, -1*scale);
+    ctx.stroke();
+
+    // base (metal)
+    ctx.fillStyle = "rgba(0,0,0,.28)";
+    drawRoundedRect(-8*scale, 12*scale, 16*scale, 8*scale, 3*scale);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.stroke();
+
+    // diamond sparkle
+    if (type === "diamond"){
+      ctx.save();
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = "rgba(255,255,255,.45)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-18*scale, -18*scale); ctx.lineTo(-10*scale, -10*scale);
+      ctx.moveTo(18*scale, -18*scale); ctx.lineTo(10*scale, -10*scale);
+      ctx.moveTo(0, -24*scale); ctx.lineTo(0, -15*scale);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function drawIdeas(){
+    for (const it of ideas){
+      drawBulb(it.x, it.y, it.type==="diamond" ? 1.12 : 1.05, it.type, it.phase);
+    }
+  }
+
+  function drawPlayer(){
+    const x = player.x, y = player.y;
+
+    ctx.save();
     // shadow
     ctx.globalAlpha = 0.25;
     ctx.fillStyle = "black";
@@ -904,150 +875,92 @@
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // body (hoodie vibe)
-    const bodyGrad = ctx.createLinearGradient(x, y, x, y+player.h);
-    bodyGrad.addColorStop(0, "rgba(106,228,255,.25)");
-    bodyGrad.addColorStop(1, "rgba(255,255,255,.08)");
-
-    ctx.fillStyle = bodyGrad;
+    // body
+    const grad = ctx.createLinearGradient(x, y, x, y+player.h);
+    grad.addColorStop(0, "rgba(106,228,255,.25)");
+    grad.addColorStop(1, "rgba(255,255,255,.08)");
+    ctx.fillStyle = grad;
     ctx.strokeStyle = "rgba(255,255,255,.14)";
     ctx.lineWidth = 2;
     drawRoundedRect(x, y, player.w, player.h, 10);
     ctx.fill();
     ctx.stroke();
 
-    // face / visor
+    // visor
     ctx.fillStyle = "rgba(0,0,0,.22)";
     drawRoundedRect(x+6, y+8, player.w-12, 14, 7);
     ctx.fill();
 
-    // badge (tiny K)
+    // badge
     ctx.fillStyle = "rgba(255,210,74,.55)";
     ctx.beginPath();
     ctx.arc(x + (player.facing>0 ? player.w-10 : 10), y+28, 4, 0, Math.PI*2);
     ctx.fill();
 
-    // "Idea net" on back (small circle)
-    ctx.strokeStyle = "rgba(106,228,255,.35)";
-    ctx.beginPath();
-    ctx.arc(x+player.w/2, y+38, 8, 0, Math.PI*2);
-    ctx.stroke();
-
     ctx.restore();
   }
 
-  function drawBulbIcon(x,y,scale,colorGlow,baseColor) {
-    // bulb composed of circle + small base
+  function drawFooter(){
     ctx.save();
-    ctx.translate(x,y);
-
-    // glow
-    ctx.globalAlpha = 0.55;
-    ctx.fillStyle = colorGlow;
-    ctx.beginPath();
-    ctx.arc(0, 0, 16*scale, 0, Math.PI*2);
-    ctx.fill();
-
-    // bulb glass
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = baseColor;
-    ctx.strokeStyle = "rgba(255,255,255,.20)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.ellipse(0, -2*scale, 10*scale, 12*scale, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-
-    // filament
-    ctx.strokeStyle = "rgba(0,0,0,.28)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(-4*scale, -2*scale);
-    ctx.quadraticCurveTo(0, 4*scale, 4*scale, -2*scale);
-    ctx.stroke();
-
-    // base
-    ctx.fillStyle = "rgba(0,0,0,.25)";
-    drawRoundedRect(-7*scale, 10*scale, 14*scale, 7*scale, 3*scale);
-    ctx.fill();
-
+    ctx.fillStyle = "rgba(255,255,255,.10)";
+    ctx.font = "700 12px ui-sans-serif, system-ui";
+    ctx.fillText("Idea Rain — catch bulbs before they hit the ground. (Designed to be impossible to catch all.)", 14, H-14);
     ctx.restore();
   }
 
-  function drawIdeas(dt) {
-    for (const it of ideas) {
-      if (it.collected) continue;
+  // ========= round reset =========
+  function resetRound(){
+    state.playing = true;
+    state.timeLeft = ROUND_TIME;
+    state.collected = { bad:0, good:0, diamond:0 };
+    state.missed = 0;
+    ideas = [];
+    spawnAcc = 0;
 
-      it.bobT += dt * 3.2;
-      const bob = Math.sin(it.bobT) * 5;
+    platforms = generatePlatforms(state.round);
 
-      const x = it.x - camX;
-      const y = it.y - camY + bob;
+    player.x = 80;
+    player.y = groundY() - player.h - 10;
+    player.vx = 0;
+    player.vy = 0;
+    player.onGround = false;
+    player.coyote = 0;
 
-      if (x < -80 || x > VIEW_W()+80) continue;
-
-      if (it.type === "bad") {
-        drawBulbIcon(x,y, 1.0, "rgba(154,166,178,.25)", "rgba(154,166,178,.55)");
-      } else if (it.type === "good") {
-        drawBulbIcon(x,y, 1.05, "rgba(255,210,74,.30)", "rgba(255,210,74,.65)");
-      } else {
-        drawBulbIcon(x,y, 1.1, "rgba(111,240,255,.32)", "rgba(111,240,255,.70)");
-        // little sparkle
-        ctx.save();
-        ctx.globalAlpha = 0.55;
-        ctx.strokeStyle = "rgba(255,255,255,.35)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x-18, y-18); ctx.lineTo(x-10, y-10);
-        ctx.moveTo(x+18, y-18); ctx.lineTo(x+10, y-10);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
+    overlay.classList.remove("show");
+    updateHud();
   }
 
-  function drawProgressBanner() {
-    // bottom subtle text
-    ctx.save();
-    ctx.fillStyle = "rgba(255,255,255,.08)";
-    ctx.font = "600 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText("Konecranes Innovation Team — Idea Sprint (collect bulbs before year-end)", 16, VIEW_H()-18);
-    ctx.restore();
-  }
-
-  // =========================
-  // Main loop
-  // =========================
+  // ========= main loop =========
   let last = performance.now();
 
-  function update(dt) {
+  function update(dt){
     if (!state.playing) return;
+
+    t += dt;
 
     // timer
     state.timeLeft -= dt;
-    if (state.timeLeft <= 0) {
+    if (state.timeLeft <= 0){
       state.timeLeft = 0;
       updateHud();
       showYearEndShop();
       return;
     }
 
-    // inputs
+    // movement
     const left = keys.has("a") || keys.has("arrowleft");
     const right = keys.has("d") || keys.has("arrowright");
 
-    if (left && !right) {
+    if (left && !right){
       player.vx -= MOVE_ACC * dt;
       player.facing = -1;
-    } else if (right && !left) {
+    } else if (right && !left){
       player.vx += MOVE_ACC * dt;
       player.facing = 1;
     } else {
-      // friction when not accelerating
       if (player.vx > 0) player.vx = Math.max(0, player.vx - FRICTION * dt);
       if (player.vx < 0) player.vx = Math.min(0, player.vx + FRICTION * dt);
     }
-
     player.vx = clamp(player.vx, -MAX_SPEED, MAX_SPEED);
 
     // gravity
@@ -1057,70 +970,77 @@
     if (player.onGround) player.coyote = COYOTE;
     else player.coyote = Math.max(0, player.coyote - dt);
 
-    // jump buffer countdown
+    // jump buffer
     jumpBuffer = Math.max(0, jumpBuffer - dt);
-
-    // Attempt jump if buffered and allowed
     const wantsJump = jumpBuffer > 0;
-    if (wantsJump && (player.onGround || player.coyote > 0)) {
+    if (wantsJump && (player.onGround || player.coyote > 0)){
       player.vy = -JUMP_V;
       player.onGround = false;
       player.coyote = 0;
       jumpBuffer = 0;
     }
 
-    resolveCollisions(dt);
-    checkCollections();
+    resolvePlayerCollisions(dt);
 
-    // camera follows player
-    const targetX = clamp(player.x + player.w/2 - VIEW_W()/2, 0, WORLD_W - VIEW_W());
-    camX = lerp(camX, targetX, 1 - Math.pow(0.001, dt)); // smooth
-    camY = 0;
+    // ✅ Idea rain spawning
+    const cfg = spawnConfig();
+    spawnAcc += dt * cfg.rate;
+
+    // spawn multiple per frame if needed (keeps rate consistent)
+    while (spawnAcc >= 1){
+      spawnIdea(cfg);
+      spawnAcc -= 1;
+    }
+
+    // update falling ideas
+    const gY = groundY();
+    for (let i=ideas.length-1; i>=0; i--){
+      const it = ideas[i];
+
+      // slight wind sway
+      const wind = Math.sin(t*1.5 + it.phase) * 22;
+
+      it.x += (it.vx + wind) * dt;
+      it.y += it.vy * dt;
+
+      // clamp and bounce at edges
+      if (it.x < 10){ it.x = 10; it.vx *= -0.4; }
+      if (it.x > W-10){ it.x = W-10; it.vx *= -0.4; }
+
+      // missed if hits ground
+      if (it.y > gY - it.r){
+        state.missed++;
+        ideas.splice(i,1);
+      }
+    }
+
+    // catch
+    checkCatch();
 
     updateHud();
   }
 
-  function render(dt) {
-    const w = VIEW_W(), h = VIEW_H();
-    ctx.clearRect(0,0,w,h);
-
+  function render(){
+    ctx.clearRect(0,0,W,H);
     drawBackground();
-
-    // Parallax "city blocks"
-    ctx.save();
-    const px = -(camX * 0.25) % 800;
-    ctx.fillStyle = "rgba(255,255,255,.035)";
-    for (let i=-1; i<4; i++){
-      const bx = px + i*800;
-      drawRoundedRect(bx, h-240, 520, 200, 28);
-      ctx.fill();
-      drawRoundedRect(bx+540, h-200, 380, 160, 28);
-      ctx.fill();
-    }
-    ctx.restore();
-
     drawPlatforms();
-    drawIdeas(dt);
+    drawIdeas();
     drawPlayer();
-    drawProgressBanner();
+    drawFooter();
   }
 
-  function loop(now) {
-    const dt = Math.min(0.033, (now - last) / 1000);
+  function loop(now){
+    const dt = Math.min(0.033, (now - last)/1000);
     last = now;
-
     update(dt);
-    render(dt);
-
+    render();
     requestAnimationFrame(loop);
   }
 
-  // =========================
-  // Start game
-  // =========================
+  // ========= start =========
+  resize();
   resetRound();
   requestAnimationFrame(loop);
-
 })();
 </script>
 </body>
