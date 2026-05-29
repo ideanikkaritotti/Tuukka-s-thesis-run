@@ -281,6 +281,25 @@
   document.addEventListener("keydown", startMusicOnce);
 </script>
 
+button onclick="toggleMusic()">🎵 Music On/Off</button>
+
+<audio id="bgMusic" loop>
+  <source src="assets/music/bgmusic.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const bgMusic = document.getElementById("bgMusic");
+  bgMusic.volume = 0.4;
+
+  function toggleMusic() {
+    if (bgMusic.paused) {
+      bgMusic.play().catch(err => console.log(err));
+    } else {
+      bgMusic.pause();
+    }
+  }
+</script>
+
 
   <div class="wrap">
     <canvas id="c"></canvas>
