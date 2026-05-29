@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Konecranes Innovation — Idea Rain</title>
+
+  <style>
+    :root{
+      --bg1:#07111f;
+      --bg2:#0b1c33;
+      --panel:rgba(10,16,26,.82);
+      --text:#eaf2ff;
+      --muted:#a9bbd6;
+      --accent:#6ae4ff;
+      --good:#ffd24a;
+      --bad:#9aa6b2;
+      --diamond:#6ff0ff;
+      --danger:#ff5d6c;
+      --ok:#7CFF92;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --field1:#153457;
+      --field2:#0d2340;
+      --grass:#235a62;
+      --stone1:#6c7988;
+      --stone2:#4e5b69;
+      --skin:#f0c4a6;
+      --hair:#243447;
+      --shirt:#f08a24;
+      --pants:#203246;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 700px at 30% 20%, #122a4b 0%, var(--bg2) 35%, var(--bg1) 100%);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      overflow:hidden;
+      padding:14px;
+    }
+
+    .wrap{
+      width:min(900px, 96vw);
+      height:min(560px, 86vh);
+      position:relative;
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    canvas{
+      width:100%;
+      height:100%;
+      display:block;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0)),
+        radial-gradient(800px 400px at 50% 10%, rgba(106,228,255,.12), transparent 60%);
+    }
+
+    .hud{
+      position:absolute;
+      inset:12px 12px auto 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      pointer-events:none;
+      flex-wrap:wrap;
+      z-index:10;
+    }
+    .hud .left, .hud .right{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .pill{
+      padding:9px 11px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 25px rgba(0,0,0,.22);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+      color:var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .pill b{ font-weight:800; }
+
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 20px rgba(106,228,255,.35);
+    }
+    .dot.good{ background:var(--good); box-shadow:0 0 18px rgba(255,210,74,.35); }
+    .dot.bad{ background:var(--bad); box-shadow:0 0 16px rgba(154,166,178,.25); }
+    .dot.diamond{ background:var(--diamond); box-shadow:0 0 18px rgba(111,240,255,.35); }
+
+    .timer.danger{
+      color:var(--danger);
+      text-shadow:0 0 16px rgba(255,93,108,.25);
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:radial-gradient(1000px 600px at 50% 15%, rgba(0,0,0,.25), rgba(0,0,0,.70));
+      backdrop-filter:blur(4px);
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      z-index:20;
+    }
+    .overlay.show{ display:flex; }
+
+    .panel{
+      width:min(820px, 96%);
+      border-radius:22px;
+      background:rgba(10,16,26,.92);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 22px 60px rgba(0,0,0,.55);
+      padding:16px;
+      max-height:calc(100% - 36px);
+      overflow:auto;
+    }
+
+    .panel header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .panel h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .panel .sub{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:4px;
+      line-height:1.35;
+      max-width:560px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 820px){
+      .grid{ grid-template-columns:1fr; }
+    }
+    .card{
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      padding:13px;
+    }
+    .card h3{
+      margin:0 0 6px 0;
+      font-size:14px;
+    }
+    .list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .shopRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px;
+      border-radius:16px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.07);
+      margin-top:10px;
+    }
+    .shopRow strong{ font-size:13.5px; display:block; }
+    .shopRow .desc{ color:var(--muted); font-size:12.5px; margin-top:4px; line-height:1.35; }
+
+    .btn{
+      pointer-events:auto;
+      cursor:pointer;
+      border:0;
+      border-radius:14px;
+      padding:9px 11px;
+      background:rgba(106,228,255,.18);
+      color:var(--text);
+      border:1px solid rgba(106,228,255,.35);
+      transition:transform .06s ease, background .15s ease;
+      font-weight:800;
+      font-size:13px;
+      min-width:120px;
+      text-align:center;
+      user-select:none;
+    }
+    .btn:hover{ background:rgba(106,228,255,.25); }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn.secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .btn:disabled{
+      cursor:not-allowed;
+      opacity:.55;
+      filter:saturate(.7);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:12px;
+      color:var(--muted);
+      font-variant-numeric: tabular-nums;
+      margin-left:8px;
+    }
+
+    .footerActions{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+      position:sticky;
+      bottom:0;
+      padding:12px 0 2px 0;
+      background:rgba(10,16,26,.92);
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+      margin-top:8px;
+    }
+
+    #musicBtn{
+      position:absolute;
+      top:12px;
+      right:12px;
+      z-index:30;
+      min-width:auto;
+      padding:8px 12px;
+      border-radius:12px;
+      font-size:13px;
+      line-height:1;
+    }
+
+    .startTitle{
+      font-size:28px;
+      line-height:1.15;
+      margin:0;
+    }
+    .startLead{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+      margin:14px 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <button id="musicBtn" class="btn secondary" type="button">🎵 Music: Off</button>
+
+    <audio id="bgMusic" loop preload="auto">
+      <source src="Rise-of-innovation.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <canvas id="c"></canvas>
+
+    <div class="hud">
+      <div class="left">
+        <div class="pill">
+          <span class="dot"></span>
+          <span><b>Round</b> <span id="roundTxt">1</span>/5</span>
+          <span class="badge">Wallet: <b id="walletTxt">0</b> coins</span>
+        </div>
+        <div class="pill">
+          <span><span class="dot bad"></span> Bad: <b id="badTxt">0</b></span>
+          <span><span class="dot good"></span> Good: <b id="goodTxt">0</b></span>
+          <span><span class="dot diamond"></span> Diamond: <b id="diaTxt">0</b></span>
+          <span class="badge">Missed: <b id="missedTxt">0</b></span>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="pill">
+          <span>Round ends in</span>
+          <b class="timer" id="timerTxt">30.0s</b>
+        </div>
+        <div class="pill">
+          <span>Move:</span>
+          <span style="color:var(--muted)">← / →</span>
+          <span style="margin-left:10px">Jump:</span>
+          <span style="color:var(--muted)">↑ / Space</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="panel" id="panel"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const CONFIG = {
+    TOTAL_ROUNDS: 5,
+    ROUND_TIME: 30.0,
+
+    GRAVITY: 2100,
+    MOVE_ACC: 3000,
+    MAX_SPEED: 480,
+    FRICTION: 2400,
+    JUMP_V: 820,
+    COYOTE: 0.09,
+    JUMP_BUFFER: 0.10,
+
+    SPAWN_BASE_RATE: 5.2,
+    SPAWN_RATE_PER_ROUND: 0.9,
+
+    BAD_CHANCE: 0.62,
+    GOOD_CHANCE: 0.33,
+    DIAMOND_CHANCE: 0.05,
+
+    FALL_MIN_BASE: 240,
+    FALL_MAX_BASE: 420,
+    FALL_MIN_PER_ROUND: 18,
+    FALL_MAX_PER_ROUND: 24,
+
+    COST_TPPS_INDIA: 50,
+    COST_FOCUS_THEMES: 50,
+    COST_PATENTOR: 100,
+
+    TPPS_INDIA_EXTRA_RATE: 2.2,
+    FOCUS_GOOD_BONUS: 0.18,
+    FOCUS_BAD_PENALTY: -0.18,
+    PATENTOR_DIAMOND_BONUS: 0.08,
+    PATENTOR_BAD_SHIFT: -0.05,
+    PATENTOR_GOOD_SHIFT: -0.03,
+
+    COINS_BAD: 1,
+    COINS_GOOD: 3,
+    COINS_DIAMOND: 10,
+
+    SFX_VOLUME_BAD: 0.045,
+    SFX_VOLUME_GOOD: 0.055,
+    SFX_VOLUME_DIAMOND: 0.07,
+
+    MUSIC_VOLUME: 0.35
+  };
+
+  const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+  const rand = (a,b)=>a+Math.random()*(b-a);
+
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  let W = 900, H = 560, DPR = 1;
+
+  const roundTxt = document.getElementById("roundTxt");
+  const walletTxt = document.getElementById("walletTxt");
+  const badTxt = document.getElementById("badTxt");
+  const goodTxt = document.getElementById("goodTxt");
+  const diaTxt = document.getElementById("diaTxt");
+  const missedTxt = document.getElementById("missedTxt");
+  const timerTxt = document.getElementById("timerTxt");
+  const overlay = document.getElementById("overlay");
+  const panel = document.getElementById("panel");
+  const bgMusic = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+
+  bgMusic.volume = CONFIG.MUSIC_VOLUME;
+
+  async function startMusic(){
+    try{
+      if (bgMusic.paused) await bgMusic.play();
+      musicBtn.textContent = "🎵 Music: On";
+    } catch (err){
+      console.log("Could not play music:", err);
+      musicBtn.textContent = "🎵 Music Error";
+    }
+  }
+
+  async function toggleMusic(){
+    try{
+      if (bgMusic.paused){
+        await bgMusic.play();
+        musicBtn.textContent = "🎵 Music: On";
+      } else {
+        bgMusic.pause();
+        musicBtn.textContent = "🎵 Music: Off";
+      }
+    } catch (err) {
+      console.log("Could not play music:", err);
+      musicBtn.textContent = "🎵 Music Error";
+    }
+  }
+
+  musicBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMusic();
+  });
+
+  let audioCtx = null;
+
+  function getAudioContext(){
+    if (!audioCtx){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    return audioCtx;
+  }
+
+  function playCollectSfx(type){
+    const ctxAudio = getAudioContext();
+    if (!ctxAudio) return;
+
+    if (ctxAudio.state === "suspended") {
+      ctxAudio.resume().catch(() => {});
+    }
+
+    const now = ctxAudio.currentTime;
+    const osc = ctxAudio.createOscillator();
+    const gain = ctxAudio.createGain();
+
+    let startFreq = 700;
+    let endFreq = 980;
+    let volume = CONFIG.SFX_VOLUME_BAD;
+    let duration = 0.08;
+    let wave = "triangle";
+
+    if (type === "good") {
+      startFreq = 820;
+      endFreq = 1180;
+      volume = CONFIG.SFX_VOLUME_GOOD;
+      duration = 0.09;
+      wave = "triangle";
+    }
+
+    if (type === "diamond") {
+      startFreq = 980;
+      endFreq = 1520;
+      volume = CONFIG.SFX_VOLUME_DIAMOND;
+      duration = 0.12;
+      wave = "sine";
+    }
+
+    osc.type = wave;
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(ctxAudio.destination);
+
+    osc.start(now);
+    osc.stop(now + duration + 0.015);
+  }
+
+  const state = {
+    round: 1,
+    wallet: 0,
+    totalIdeas: 0,
+    totalCoinsEarned: 0,
+    upgrades: {
+      tppsIndia: 0,
+      focusThemes: 0,
+      patentor: 0
+    },
+    started: false,
+    playing: false,
+    screen: "start",
+    timeLeft: CONFIG.ROUND_TIME,
+    collected: { bad:0, good:0, diamond:0 },
+    missed: 0,
+    yearEnd: {
+      active: false,
+      payoutApplied: false,
+      payoutCoins: 0
+    }
+  };
+
+  const keys = new Set();
+  let jumpBuffer = 0;
+
+  window.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    keys.add(k);
+    if (k === " " || k === "w" || k === "arrowup") jumpBuffer = CONFIG.JUMP_BUFFER;
+    if ([" ", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
+  }, { passive:false });
+
+  window.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
+
+  const player = {
+    x: 80,
+    y: 0,
+    w: 34,
+    h: 48,
+    vx: 0,
+    vy: 0,
+    onGround: false,
+    coyote: 0,
+    facing: 1,
+    step: 0
+  };
+
+  let platforms = [];
+  let stones = [];
+  let ideas = [];
+  let spawnAcc = 0;
+  let t = 0;
+
+  function groundY(){
+    return H - 64;
+  }
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.floor(rect.width * DPR);
+    canvas.height = Math.floor(rect.height * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    W = rect.width;
+    H = rect.height;
+    rebuildWorld();
+  }
+  window.addEventListener("resize", resize);
+
+  function generateStoneObstacles(round){
+    const gY = groundY();
+    const shift = Math.min(22, (round - 1) * 4);
+    const data = [
+      { x: W * 0.22, w: 52, h: 26 + shift },
+      { x: W * 0.43, w: 64, h: 34 + shift },
+      { x: W * 0.63, w: 54, h: 28 + shift },
+      { x: W * 0.81, w: 70, h: 40 + shift }
+    ];
+    return data.map(s => ({ x: clamp(s.x, 60, W - s.w - 20), y: gY - s.h, w: s.w, h: s.h }));
+  }
+
+  function rebuildWorld(){
+    stones = generateStoneObstacles(state.round);
+    platforms = [{ x:0, y:groundY(), w:W, h:H-groundY() }, ...stones];
+  }
+
+  function spawnConfig(){
+    let rate = CONFIG.SPAWN_BASE_RATE + (state.round-1) * CONFIG.SPAWN_RATE_PER_ROUND;
+    rate += state.upgrades.tppsIndia * CONFIG.TPPS_INDIA_EXTRA_RATE;
+
+    let badP = CONFIG.BAD_CHANCE;
+    let goodP = CONFIG.GOOD_CHANCE;
+    let diaP = CONFIG.DIAMOND_CHANCE;
+
+    goodP += state.upgrades.focusThemes * CONFIG.FOCUS_GOOD_BONUS;
+    badP += state.upgrades.focusThemes * CONFIG.FOCUS_BAD_PENALTY;
+
+    diaP += state.upgrades.patentor * CONFIG.PATENTOR_DIAMOND_BONUS;
+    badP += state.upgrades.patentor * CONFIG.PATENTOR_BAD_SHIFT;
+    goodP += state.upgrades.patentor * CONFIG.PATENTOR_GOOD_SHIFT;
+
+    badP = Math.max(0.08, badP);
+    goodP = Math.max(0.10, goodP);
+    diaP = Math.max(0.02, diaP);
+
+    const sum = badP + goodP + diaP;
+    badP/=sum; goodP/=sum; diaP/=sum;
+
+    const fallMin = CONFIG.FALL_MIN_BASE + (state.round-1) * CONFIG.FALL_MIN_PER_ROUND;
+    const fallMax = CONFIG.FALL_MAX_BASE + (state.round-1) * CONFIG.FALL_MAX_PER_ROUND;
+
+    return { rate, badP, goodP, diaP, fallMin, fallMax };
+  }
+
+  function pickIdeaType(cfg){
+    const r = Math.random();
+    if (r < cfg.badP) return "bad";
+    if (r < cfg.badP + cfg.goodP) return "good";
+    return "diamond";
+  }
+
+  function spawnIdea(cfg){
+    const type = pickIdeaType(cfg);
+    const r = (type === "diamond") ? 16 : 14;
+
+    ideas.push({
+      x: rand(20, W-20),
+      y: -rand(30, 120),
+      vx: rand(-45, 45),
+      vy: rand(cfg.fallMin, cfg.fallMax),
+      r,
+      type,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+
+  function aabb(ax,ay,aw,ah, bx,by,bw,bh){
+    return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+  }
+
+  function resolvePlayer(dt){
+    player.onGround = false;
+
+    player.x += player.vx * dt;
+    for (const pl of platforms){
+      if (aabb(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)){
+        if (player.vx > 0) player.x = pl.x - player.w;
+        else if (player.vx < 0) player.x = pl.x + pl.w;
+        player.vx = 0;
+      }
+    }
+
+    player.y += player.vy * dt;
+    for (const pl of platforms){
+      if (aabb(player.x, player.y, player.w, player.h, pl.x, pl.y, pl.w, pl.h)){
+        if (player.vy > 0){
+          player.y = pl.y - player.h;
+          player.vy = 0;
+          player.onGround = true;
+          player.coyote = CONFIG.COYOTE;
+        } else if (player.vy < 0){
+          player.y = pl.y + pl.h;
+          player.vy = 0;
+        }
+      }
+    }
+
+    player.x = clamp(player.x, 0, W - player.w);
+
+    if (player.y > H + 160){
+      player.x = 80;
+      player.y = groundY() - player.h;
+      player.vx = 0;
+      player.vy = 0;
+      state.timeLeft = Math.max(0, state.timeLeft - 1.5);
+    }
+  }
+
+  function checkCatch(){
+    const px = player.x + player.w/2;
+    const py = player.y + player.h/2;
+    const catchR = Math.max(player.w, player.h) * 0.55;
+
+    for (let i=ideas.length-1; i>=0; i--){
+      const it = ideas[i];
+      const dx = it.x - px, dy = it.y - py;
+      const rr = it.r + catchR;
+      if (dx*dx + dy*dy < rr*rr){
+        state.collected[it.type]++;
+        state.totalIdeas++;
+        playCollectSfx(it.type);
+        ideas.splice(i,1);
+      }
+    }
+  }
+
+  function coinsFromCollected(col){
+    return col.bad * CONFIG.COINS_BAD + col.good * CONFIG.COINS_GOOD + col.diamond * CONFIG.COINS_DIAMOND;
+  }
+
+  function updateHud(){
+    roundTxt.textContent = state.round;
+    walletTxt.textContent = state.wallet;
+    badTxt.textContent = state.collected.bad;
+    goodTxt.textContent = state.collected.good;
+    diaTxt.textContent = state.collected.diamond;
+    missedTxt.textContent = state.missed;
+    timerTxt.textContent = `${state.timeLeft.toFixed(1)}s`;
+    timerTxt.classList.toggle("danger", state.timeLeft <= 7);
+  }
+
+  function shopRowHTML(title, desc, cost, key){
+    const count = state.upgrades[key];
+    const affordable = state.wallet >= cost;
+    const label = affordable ? `Buy (${cost})` : `Need ${cost}`;
+    return `
+      <div class="shopRow">
+        <div>
+          <strong>${title}${count > 0 ? `<span class="badge">Owned x${count}</span>` : ""}</strong>
+          <div class="desc">${desc}</div>
+        </div>
+        <button class="btn ${affordable ? "" : "secondary"}" id="buy_${key}" ${affordable ? "" : "disabled"}>${label}</button>
+      </div>
+    `;
+  }
+
+  function renderStartScreen(){
+    state.playing = false;
+    state.screen = "start";
+    panel.innerHTML = `
+      <header>
+        <div>
+          <h2 class="startTitle">Welcome to Innovation Management Team!</h2>
+          <div class="sub startLead">
+            <div>You have 5 rounds to collect as many ideas as possible.</div>
+            <div>Some ideas are more valuable than others.</div>
+            <div>Move with keyboard arrows.</div>
+            <div style="margin-top:10px; color:var(--text); font-weight:700;">Are you ready?</div>
+          </div>
+        </div>
+        <div class="pill" style="pointer-events:none;">
+          <span class="dot"></span>
+          <span>Catch ideas, jump over stones, and build your wallet.</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>How it works</h3>
+          <ul class="list">
+            <li>You have <b>${CONFIG.TOTAL_ROUNDS}</b> rounds.</li>
+            <li>Idea value: bad = <b>${CONFIG.COINS_BAD}</b>, good = <b>${CONFIG.COINS_GOOD}</b>, diamond = <b>${CONFIG.COINS_DIAMOND}</b> coins.</li>
+            <li>At the end of every round, you can buy upgrades for the next rounds.</li>
+            <li>Stones on the field must be jumped over.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Controls</h3>
+          <ul class="list">
+            <li><b>Move:</b> Left and right arrow keys</li>
+            <li><b>Jump:</b> Up arrow or Space</li>
+            <li><b>Music:</b> The Start Game button turns music on immediately</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footerActions">
+        <button class="btn" id="btnStartGame">Start Game</button>
+      </div>
+    `;
+    overlay.classList.add("show");
+    document.getElementById("btnStartGame").addEventListener("click", async () => {
+      const ctxAudio = getAudioContext();
+      if (ctxAudio && ctxAudio.state === "suspended") {
+        ctxAudio.resume().catch(() => {});
+      }
+      await startMusic();
+      startFreshGame();
+    });
+  }
+
+  function renderYearEndOverlay(){
+    const earned = state.yearEnd.payoutCoins;
+    panel.innerHTML = `
+      <header>
+        <div>
+          <h2>Year End Review — Round ${state.round}/${CONFIG.TOTAL_ROUNDS}</h2>
+          <div class="sub">
+            Idea rain season is over. Coins are paid based on the quality you caught before ideas hit the ground.
+          </div>
+        </div>
+        <div class="pill" style="pointer-events:none;">
+          <span class="dot"></span>
+          <span>Earned this year: <b style="color:var(--ok)">${earned}</b> coins</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Results</h3>
+          <ul class="list">
+            <li><b>Bad ideas</b>: ${state.collected.bad} × ${CONFIG.COINS_BAD} coin(s)</li>
+            <li><b>Good ideas</b>: ${state.collected.good} × ${CONFIG.COINS_GOOD} coin(s)</li>
+            <li><b>Diamond ideas</b>: ${state.collected.diamond} × ${CONFIG.COINS_DIAMOND} coin(s)</li>
+            <li><b>Missed (hit the ground)</b>: ${state.missed}</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Wallet & Totals</h3>
+          <ul class="list">
+            <li><b>Wallet now</b>: ${state.wallet} coins</li>
+            <li><b>Total ideas gathered</b>: ${state.totalIdeas}</li>
+            <li><b>Total coins earned</b>: ${state.totalCoinsEarned}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h3>Upgrade Shop</h3>
+
+        ${shopRowHTML(
+          "Set idea quantity TPPs to India",
+          `Cost: ${CONFIG.COST_TPPS_INDIA} coins — More ideas rain in the next rounds. Currently owned: <b>${state.upgrades.tppsIndia}</b>.`,
+          CONFIG.COST_TPPS_INDIA,
+          "tppsIndia"
+        )}
+
+        ${shopRowHTML(
+          "Select innovation focus themes",
+          `Cost: ${CONFIG.COST_FOCUS_THEMES} coins — More good ideas and fewer bad ideas in the next rounds. Currently owned: <b>${state.upgrades.focusThemes}</b>.`,
+          CONFIG.COST_FOCUS_THEMES,
+          "focusThemes"
+        )}
+
+        ${shopRowHTML(
+          "Hire an idea patentor",
+          `Cost: ${CONFIG.COST_PATENTOR} coins — More diamond ideas in the next rounds. Currently owned: <b>${state.upgrades.patentor}</b>.`,
+          CONFIG.COST_PATENTOR,
+          "patentor"
+        )}
+
+        <div class="tiny">
+          All upgrades can be purchased again and again. Their effects stack every time you buy them.
+        </div>
+      </div>
+
+      <div class="footerActions">
+        <button class="btn secondary" id="btnReplay">Restart Game</button>
+        <button class="btn" id="btnNext">${state.round < CONFIG.TOTAL_ROUNDS ? "Start Next Year →" : "Finish Game →"}</button>
+      </div>
+    `;
+
+    for (const key of ["tppsIndia","focusThemes","patentor"]){
+      const btn = document.getElementById(`buy_${key}`);
+      if (btn) btn.addEventListener("click", ()=>buyUpgrade(key));
+    }
+
+    document.getElementById("btnReplay").addEventListener("click", () => {
+      startFreshGame();
+    });
+    document.getElementById("btnNext").addEventListener("click", () => {
+      if (state.round >= CONFIG.TOTAL_ROUNDS) showFinal();
+      else {
+        state.round++;
+        resetRound();
+      }
+    });
+  }
+
+  function showYearEnd(){
+    state.playing = false;
+    state.screen = "shop";
+    state.yearEnd.active = true;
+
+    if (!state.yearEnd.payoutApplied){
+      const earned = coinsFromCollected(state.collected);
+      state.yearEnd.payoutCoins = earned;
+      state.wallet += earned;
+      state.totalCoinsEarned += earned;
+      state.yearEnd.payoutApplied = true;
+    }
+
+    renderYearEndOverlay();
+    overlay.classList.add("show");
+    updateHud();
+  }
+
+  function buyUpgrade(key){
+    const costs = {
+      tppsIndia: CONFIG.COST_TPPS_INDIA,
+      focusThemes: CONFIG.COST_FOCUS_THEMES,
+      patentor: CONFIG.COST_PATENTOR
+    };
+
+    const cost = costs[key] ?? 99999;
+    if (state.wallet < cost) return;
+
+    state.wallet -= cost;
+    state.upgrades[key] += 1;
+    renderYearEndOverlay();
+    updateHud();
+  }
+
+  function showFinal(){
+    state.playing = false;
+    state.screen = "final";
+    panel.innerHTML = `
+      <header>
+        <div>
+          <h2>5 Years Completed — Innovation Program Summary</h2>
+          <div class="sub">Final results of your innovation idea-catching sprint.</div>
+        </div>
+        <div class="pill" style="pointer-events:none;">
+          <span class="dot"></span>
+          <span>Final wallet: <b style="color:var(--accent)">${state.wallet}</b> coins</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Final Score</h3>
+          <ul class="list">
+            <li><b>Total ideas gathered</b>: ${state.totalIdeas}</li>
+            <li><b>Total coins earned</b>: ${state.totalCoinsEarned}</li>
+          </ul>
+          <div class="tiny">Your core score is ideas gathered: <b>${state.totalIdeas}</b>.</div>
+        </div>
+
+        <div class="card">
+          <h3>Upgrades Bought</h3>
+          <ul class="list">
+            <li>TPPs to India: <b>x${state.upgrades.tppsIndia}</b></li>
+            <li>Focus themes: <b>x${state.upgrades.focusThemes}</b></li>
+            <li>Idea patentor: <b>x${state.upgrades.patentor}</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footerActions">
+        <button class="btn secondary" id="btnReplay2">Restart</button>
+      </div>
+    `;
+    overlay.classList.add("show");
+    document.getElementById("btnReplay2").addEventListener("click", () => {
+      startFreshGame();
+    });
+    updateHud();
+  }
+
+  function startFreshGame(){
+    state.started = true;
+    state.round = 1;
+    state.wallet = 0;
+    state.totalIdeas = 0;
+    state.totalCoinsEarned = 0;
+    state.upgrades = { tppsIndia:0, focusThemes:0, patentor:0 };
+    resetRound();
+  }
+
+  function drawRoundedRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+
+  function drawBackground(){
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+    for (let i=0;i<46;i++){
+      const x = (i*97 % 1200) % W;
+      const y = (i*53 % 700) % H;
+      ctx.fillStyle = "rgba(255,255,255,.65)";
+      ctx.fillRect(x, y, 2, 2);
+    }
+    ctx.restore();
+
+    ctx.save();
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "rgba(106,228,255,.10)");
+    sky.addColorStop(0.55, "rgba(106,228,255,.03)");
+    sky.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0,0,W,H);
+    ctx.restore();
+
+    ctx.save();
+    const fy = groundY();
+    const field = ctx.createLinearGradient(0, fy - 40, 0, H);
+    field.addColorStop(0, "rgba(35,90,98,.75)");
+    field.addColorStop(1, "rgba(13,35,64,1)");
+    ctx.fillStyle = field;
+    ctx.fillRect(0, fy - 10, W, H - fy + 20);
+
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, fy);
+    ctx.lineTo(W, fy);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawStones(){
+    for (const s of stones){
+      ctx.save();
+      const grad = ctx.createLinearGradient(s.x, s.y, s.x, s.y + s.h);
+      grad.addColorStop(0, "rgba(108,121,136,.95)");
+      grad.addColorStop(1, "rgba(78,91,105,.95)");
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.lineWidth = 2;
+      drawRoundedRect(s.x, s.y, s.w, s.h, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,.08)";
+      drawRoundedRect(s.x + 6, s.y + 5, Math.max(8, s.w - 12), Math.max(6, s.h * 0.28), 8);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function drawBulb(x,y,scale,type,phase){
+    let glow, glass;
+    if (type === "bad"){
+      glow = "rgba(154,166,178,.28)";
+      glass = "rgba(154,166,178,.60)";
+    } else if (type === "good"){
+      glow = "rgba(255,210,74,.32)";
+      glass = "rgba(255,210,74,.70)";
+    } else {
+      glow = "rgba(111,240,255,.35)";
+      glass = "rgba(111,240,255,.78)";
+    }
+
+    const wobble = Math.sin(t*4 + phase) * 0.05;
+
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(wobble);
+
+    ctx.globalAlpha = 0.60;
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, 18*scale, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = glass;
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -2*scale, 11*scale, 14*scale, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.globalAlpha = 0.30;
+    ctx.fillStyle = "rgba(255,255,255,.9)";
+    ctx.beginPath();
+    ctx.ellipse(-4*scale, -8*scale, 3*scale, 6*scale, 0.4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.strokeStyle = "rgba(0,0,0,.30)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-5*scale, -1*scale);
+    ctx.quadraticCurveTo(0, 5*scale, 5*scale, -1*scale);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(0,0,0,.28)";
+    drawRoundedRect(-8*scale, 12*scale, 16*scale, 8*scale, 3*scale);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.stroke();
+
+    if (type === "diamond"){
+      ctx.save();
+      ctx.globalAlpha = 0.55;
+      ctx.strokeStyle = "rgba(255,255,255,.45)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-18*scale, -18*scale); ctx.lineTo(-10*scale, -10*scale);
+      ctx.moveTo(18*scale, -18*scale); ctx.lineTo(10*scale, -10*scale);
+      ctx.moveTo(0, -24*scale); ctx.lineTo(0, -15*scale);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function drawIdeas(){
+    for (const it of ideas){
+      drawBulb(it.x, it.y, it.type === "diamond" ? 1.12 : 1.05, it.type, it.phase);
+    }
+  }
+
+  function drawPlayer(){
+    const x = player.x;
+    const y = player.y;
+    const walk = Math.sin(player.step) * 2.2;
+
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.ellipse(x + player.w/2, y + player.h + 7, 16, 5.5, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // legs
+    ctx.strokeStyle = "rgba(18,24,36,.95)";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x + 14, y + 32);
+    ctx.lineTo(x + 12, y + 43 + walk);
+    ctx.moveTo(x + 20, y + 32);
+    ctx.lineTo(x + 22, y + 43 - walk);
+    ctx.stroke();
+
+    // feet
+    ctx.strokeStyle = "rgba(240,138,36,.95)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y + 45 + walk);
+    ctx.lineTo(x + 15, y + 45 + walk);
+    ctx.moveTo(x + 20, y + 45 - walk);
+    ctx.lineTo(x + 25, y + 45 - walk);
+    ctx.stroke();
+
+    // torso
+    ctx.fillStyle = "rgba(240,138,36,.95)";
+    drawRoundedRect(x + 9, y + 15, 16, 17, 6);
+    ctx.fill();
+
+    // arms
+    ctx.strokeStyle = "rgba(240,196,166,.95)";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y + 19);
+    ctx.lineTo(x + (player.facing > 0 ? 5 : 7), y + 28 - walk * 0.5);
+    ctx.moveTo(x + 24, y + 19);
+    ctx.lineTo(x + (player.facing > 0 ? 29 : 27), y + 28 + walk * 0.5);
+    ctx.stroke();
+
+    // neck
+    ctx.fillStyle = "rgba(240,196,166,.98)";
+    drawRoundedRect(x + 14, y + 12, 6, 5, 2);
+    ctx.fill();
+
+    // head
+    ctx.fillStyle = "rgba(240,196,166,.98)";
+    ctx.beginPath();
+    ctx.arc(x + 17, y + 9, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // hair
+    ctx.fillStyle = "rgba(36,52,71,.98)";
+    ctx.beginPath();
+    ctx.arc(x + 17, y + 7.4, 8.2, Math.PI, Math.PI * 2);
+    ctx.lineTo(x + 9, y + 10);
+    ctx.quadraticCurveTo(x + 17, y + 1, x + 25, y + 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // eye
+    ctx.fillStyle = "rgba(20,26,34,.98)";
+    ctx.beginPath();
+    ctx.arc(x + (player.facing > 0 ? 19.5 : 14.5), y + 9, 1.1, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawFooter(){
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.12)";
+    ctx.font = "700 12px ui-sans-serif, system-ui";
+    ctx.fillText("Catch ideas and jump over stones.", 14, H-14);
+    ctx.restore();
+  }
+
+  function resetRound(){
+    state.playing = true;
+    state.screen = "round";
+    state.timeLeft = CONFIG.ROUND_TIME;
+    state.collected = { bad:0, good:0, diamond:0 };
+    state.missed = 0;
+    ideas = [];
+    spawnAcc = 0;
+
+    state.yearEnd.active = false;
+    state.yearEnd.payoutApplied = false;
+    state.yearEnd.payoutCoins = 0;
+
+    rebuildWorld();
+
+    player.x = 80;
+    player.y = groundY() - player.h;
+    player.vx = 0;
+    player.vy = 0;
+    player.onGround = false;
+    player.coyote = 0;
+    player.step = 0;
+
+    overlay.classList.remove("show");
+    updateHud();
+  }
+
+  let last = performance.now();
+
+  function update(dt){
+    if (!state.playing) return;
+
+    t += dt;
+
+    state.timeLeft -= dt;
+    if (state.timeLeft <= 0){
+      state.timeLeft = 0;
+      updateHud();
+      showYearEnd();
+      return;
+    }
+
+    const left = keys.has("a") || keys.has("arrowleft");
+    const right = keys.has("d") || keys.has("arrowright");
+
+    if (left && !right){
+      player.vx -= CONFIG.MOVE_ACC * dt;
+      player.facing = -1;
+    } else if (right && !left){
+      player.vx += CONFIG.MOVE_ACC * dt;
+      player.facing = 1;
+    } else {
+      if (player.vx > 0) player.vx = Math.max(0, player.vx - CONFIG.FRICTION * dt);
+      if (player.vx < 0) player.vx = Math.min(0, player.vx + CONFIG.FRICTION * dt);
+    }
+    player.vx = clamp(player.vx, -CONFIG.MAX_SPEED, CONFIG.MAX_SPEED);
+
+    player.vy += CONFIG.GRAVITY * dt;
+
+    if (player.onGround) player.coyote = CONFIG.COYOTE;
+    else player.coyote = Math.max(0, player.coyote - dt);
+
+    jumpBuffer = Math.max(0, jumpBuffer - dt);
+    if (jumpBuffer > 0 && (player.onGround || player.coyote > 0)){
+      player.vy = -CONFIG.JUMP_V;
+      player.onGround = false;
+      player.coyote = 0;
+      jumpBuffer = 0;
+    }
+
+    resolvePlayer(dt);
+
+    if (Math.abs(player.vx) > 20 && player.onGround){
+      player.step += dt * 12;
+    }
+
+    const cfg = spawnConfig();
+    spawnAcc += dt * cfg.rate;
+    while (spawnAcc >= 1){
+      spawnIdea(cfg);
+      spawnAcc -= 1;
+    }
+
+    const gY = groundY();
+    for (let i=ideas.length-1; i>=0; i--){
+      const it = ideas[i];
+      const wind = Math.sin(t*1.5 + it.phase) * 22;
+
+      it.x += (it.vx + wind) * dt;
+      it.y += it.vy * dt;
+
+      if (it.x < 10){ it.x = 10; it.vx *= -0.4; }
+      if (it.x > W-10){ it.x = W-10; it.vx *= -0.4; }
+
+      if (it.y > gY - it.r){
+        state.missed++;
+        ideas.splice(i,1);
+      }
+    }
+
+    checkCatch();
+    updateHud();
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    drawBackground();
+    drawStones();
+    drawIdeas();
+    drawPlayer();
+    drawFooter();
+  }
+
+  function loop(now){
+    const dt = Math.min(0.033, (now - last)/1000);
+    last = now;
+    update(dt);
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  updateHud();
+  renderStartScreen();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
